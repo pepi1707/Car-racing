@@ -4,20 +4,18 @@ from math import *
 
 class Car(object):
 
-    def __init__(self, pos_x, pos_y, width, height, angle = 0.0, max_steering = 45.0, max_vel = 10.0, max_acc = 2.0, dec = 0.3):
+    def __init__(self, pos_x, pos_y, width, height, angle = -90.0, max_vel = 10.0, max_acc = 2.0, dec = 0.92):
         self.width = width
         self.height = height
         self.pos = pygame.math.Vector2(pos_x, pos_y)
         self.vel = pygame.math.Vector2(0, 0)
         self.angle = angle
 
-        self.max_steering = max_steering
         self.max_vel = max_vel
         self.max_acc = max_acc
         
-        self.acc = 0
+        self.acc = pygame.math.Vector2(0, 0)
         self.dec = dec
-        self.steering = 0.0
 
         self.image = pygame.image.load("car.png")
         self.hitting_image = pygame.image.load("car_hitting.png")
@@ -28,32 +26,22 @@ class Car(object):
 
     def move(self, dt):
 
-        self.steering = max(-self.max_steering, min(self.max_steering, self.steering))
-        self.acc = max(-self.max_acc, min(self.max_acc, self.acc))
+        #self.acc = max(-self.max_acc, min(self.max_acc, self.acc))
 
-        if self.acc:
-            self.vel += (0, self.acc * dt)
+        if self.acc.x:
+            self.vel += self.acc
+            if self.vel.length_squared() > self.max_vel * self.max_vel:
+                self.vel *= self.max_vel / self.vel.length()
         else:
-            if self.vel.y > 0:
-                self.vel.y = max(0.0, self.vel.y - self.dec * dt)
-            elif self.vel.y < 0:
-                self.vel.y = min(0.0, self.vel.y + self.dec * dt)
-        self.vel.y = max(-self.max_vel, min(self.max_vel, self.vel.y))
-
-        if self.steering:
-            turning_radius = self.height / sin(radians(self.steering))
-            angular_vel = self.vel.y / turning_radius
-        else:
-            angular_vel = 0.0
-
-        self.angle += degrees(angular_vel) * dt
-        self.pos += self.vel.rotate(-self.angle) * dt
+            self.vel = self.dec * self.vel
+        
+        self.pos += self.vel * dt
 
     def draw(self, game_window):
         if self.hitting == False:
-            rotated_img = pygame.transform.rotate(self.image, self.angle)
+            rotated_img = pygame.transform.rotate(self.image, self.angle + 90)
         else:
-            rotated_img = pygame.transform.rotate(self.hitting_image, self.angle)
+            rotated_img = pygame.transform.rotate(self.hitting_image, self.angle + 90)
         game_window.blit(rotated_img, self.pos - (self.width / 2, self.height / 2))
 
     def isHitting(self, track):

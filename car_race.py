@@ -2,6 +2,7 @@ import pygame
 import sys
 import Car
 import Track
+from math import *
 
 WINDOW_WIDTH = 1800
 WINDOW_HEIGHT = 1000
@@ -30,16 +31,18 @@ while game_running:
     pressed = pygame.key.get_pressed()
 
     if pressed[pygame.K_UP]:
-        car.acc -= dt * 0.1
+        car.acc = pygame.math.Vector2(-dt * 5 * cos(radians(car.angle)), dt * 5 * sin(radians(car.angle))) 
     elif pressed[pygame.K_DOWN]:
-        car.acc += dt * 0.1
+        car.acc = pygame.math.Vector2(dt * 5 * cos(radians(car.angle)), -dt * 5 * sin(radians(car.angle))) 
     else:
-        car.acc = 0
+        car.acc = pygame.math.Vector2(0, 0)
 
     if pressed[pygame.K_LEFT]:
-        car.steering -= car.max_steering * dt * 0.3
+        #car.steering += car.max_steering * dt * 0.3
+        car.angle += dt * 8
     elif pressed[pygame.K_RIGHT]:
-        car.steering += car.max_steering * dt * 0.3
+        #car.steering += car.max_steering * dt * 0.3
+        car.angle -= dt * 8
     else:
         car.steering = 0
 
