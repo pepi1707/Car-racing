@@ -19,11 +19,11 @@ pygame.display.set_caption("nice")
 
 game_running = True
 
-car = Car.Car(100, 100, 20, 40)
+car = Car.Car(220, 420, 40, 20)
 track = Track.Track('easy.txt', (255, 255, 255))
 
 while game_running:
-    dt = clock.get_time() / 20
+    dt = clock.get_time() / 40
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game_running = False
@@ -31,18 +31,18 @@ while game_running:
     pressed = pygame.key.get_pressed()
 
     if pressed[pygame.K_UP]:
-        car.acc = pygame.math.Vector2(-dt * 5 * cos(radians(car.angle)), dt * 5 * sin(radians(car.angle))) 
+        car.acc = pygame.math.Vector2(dt * 3 * cos(radians(car.angle)), dt * 3 * sin(radians(car.angle))) 
     elif pressed[pygame.K_DOWN]:
-        car.acc = pygame.math.Vector2(dt * 5 * cos(radians(car.angle)), -dt * 5 * sin(radians(car.angle))) 
+        car.acc = pygame.math.Vector2(-dt * 3 * cos(radians(car.angle)), -dt * 3 * sin(radians(car.angle))) 
     else:
         car.acc = pygame.math.Vector2(0, 0)
 
     if pressed[pygame.K_LEFT]:
         #car.steering += car.max_steering * dt * 0.3
-        car.angle += dt * 8
+        car.angle -= dt * 8 * car.vel.length() / car.max_vel
     elif pressed[pygame.K_RIGHT]:
         #car.steering += car.max_steering * dt * 0.3
-        car.angle -= dt * 8
+        car.angle += dt * 8 * car.vel.length() / car.max_vel
     else:
         car.steering = 0
 
@@ -60,7 +60,7 @@ while game_running:
 
     pygame.display.update()
 
-    clock.tick(120)
+    clock.tick(60)
 
 pygame.quit()
 sys.exit()
