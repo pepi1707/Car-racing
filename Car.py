@@ -4,7 +4,7 @@ from math import *
 
 class Car(object):
 
-    def __init__(self, pos_x, pos_y, width, height, angle = -90.0, max_vel = 12.0, max_acc = 2.0, dec = 0.94):
+    def __init__(self, pos_x, pos_y, width, height, angle = -90.0, max_vel = 14.0, dec = 0.94):
         self.width = width
         self.height = height
         self.pos = pygame.math.Vector2(pos_x, pos_y)
@@ -12,7 +12,6 @@ class Car(object):
         self.angle = angle
 
         self.max_vel = max_vel
-        self.max_acc = max_acc
         
         self.acc = pygame.math.Vector2(0, 0)
         self.dec = dec
@@ -39,7 +38,7 @@ class Car(object):
             if self.vel.length_squared() > self.max_vel * self.max_vel:
                 self.vel *= self.max_vel / self.vel.length()
         else:
-            self.vel = self.dec * self.vel
+            self.vel *= self.dec
         
         self.pos += self.vel * dt
 
@@ -53,7 +52,7 @@ class Car(object):
         game_window.blit(rotated_img, rect)
 
         for sensor in self.sensors:
-            pygame.draw.line(game_window, (0, 0, 0), sensor[0] ,sensor[1])
+            pygame.draw.line(game_window, (0, 0, 0), sensor[0], sensor[1])
 
     def rotate(self, point):
         point -= self.pos

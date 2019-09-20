@@ -20,7 +20,7 @@ pygame.display.set_caption("nice")
 game_running = True
 
 car = Car.Car(220, 420, 40, 20)
-track = Track.Track('easy.txt', (255, 255, 255))
+track = Track.Track('test', (255, 255, 255))
 
 while game_running:
     dt = clock.get_time() / 40
@@ -39,10 +39,10 @@ while game_running:
 
     if pressed[pygame.K_LEFT]:
         #car.steering += car.max_steering * dt * 0.3
-        car.angle -= dt * 8 * car.vel.length() / car.max_vel
+        car.angle -= dt * 10 * car.vel.length() / car.max_vel
     elif pressed[pygame.K_RIGHT]:
         #car.steering += car.max_steering * dt * 0.3
-        car.angle += dt * 8 * car.vel.length() / car.max_vel
+        car.angle += dt * 10 * car.vel.length() / car.max_vel
     else:
         car.steering = 0
 
