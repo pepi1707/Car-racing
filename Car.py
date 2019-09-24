@@ -23,7 +23,7 @@ class Car(object):
 
         self.hitting = False
 
-        self.sensors = [None] * 7
+        self.sensors = [pygame.math.Vector2(0, 0)] * 7
 
     def move(self, dt):
 
@@ -65,6 +65,8 @@ class Car(object):
 
     def isHitting(self, track):
 
+        self.hasReward = 0
+
         to_corner = pygame.math.Vector2(self.width / 2, self.height / 2)
         corners = [(0, 0)] * 4
         corners[0] = self.pos + (to_corner.x * -1, to_corner.y * -1)
@@ -93,15 +95,26 @@ class Car(object):
 
         border_lines = [(x, y) for (x,y) in zip(track.borders[0][:-1], track.borders[0][1:])] + [(x, y) for (x,y) in zip(track.borders[1][:-1], track.borders[1][1:])]
 
+        for line in lines:
+            inter = intersection(line, track.rewards[track.rewardIndex])
+            if inter:
+                if isBetween(line, inter):
+                    self.hasReward = 1
+                    track.rewardIndex += 1
+                    if track.rewardIndex == len(track.rewards):
+                        track.rewardIndex = 0
+                    break
+
         for i,sensor in enumerate(sensors):
             min_dist = 2000 ** 2
             self.sensors[i] = sensor
             for border_line in border_lines:
                 inter = intersection(sensor, border_line)
                 if inter:
-                    if isBetween(border_line, inter) and isBetween(sensor, inter) and dist(sensor[1], inter) < min_dist:
-                        min_dist = dist(sensor[1], inter)
+                    if isBetween(border_line, inter) and isBetween(sensor, inter) and (sensor[1] - inter).length_squared() < min_dist:
+                        min_dist = (sensor[1] - inter).length_squared()
                         self.sensors[i] = (inter, sensor[1])
+
 
         for line in lines:
             for border_line in border_lines:
@@ -127,13 +140,10 @@ def intersection(line1, line2):
     d = (det(*line1), det(*line2))
     x = det(d, xdiff) / div
     y = det(d, ydiff) / div
-    return x, y
+    return pygame.math.Vector2(x, y)
         
 def isBetween(l, p):
     if l[0][0] <= p[0] <= l[1][0] or l[0][0] >= p[0] >= l[1][0]:
         if l[0][1] <= p[1] <= l[1][1] or l[0][1] >= p[1] >= l[1][1]:
             return True
     return False
-
-def dist(p1, p2):
-    return (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2

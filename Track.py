@@ -19,16 +19,19 @@ class Track(object):
                     self.borders[i].append((x,y))
         
         self.rewards = []
-    	with open(track_name + '_rewards.txt', 'r') as f:
+        self.rewardIndex = 0
+        with open(track_name + '_rewards.txt', 'r') as f:
             num = int(f.readline())
             for i in range(num):
                 line = f.readline().split(' ')
                 for i in range(len(line)):
                     line[i] = int(line[i])
-                rewards.append([(line[0], line[1]), (line[2], line[3])])
+                self.rewards.append([(line[0], line[1]), (line[2], line[3])])
 
         
     def draw(self, game_window, bg_colour):
         pygame.draw.polygon(game_window, self.colour, self.borders[0])
         for i in range(1, len(self.borders)):
             pygame.draw.polygon(game_window, bg_colour, self.borders[i])
+        #for line in self.rewards:
+        #    pygame.draw.line(game_window, (0,0,0), line[0], line[1])
